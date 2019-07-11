@@ -1,0 +1,56 @@
+version: 2
+
+jobs:
+  build:
+    docker:
+      - image: 'circleci/node'
+    steps:
+      - attach_workspace:
+          at: ~/workspace
+      - checkout
+      - run: mkdir dist
+      - run: yarn install && yarn run build
+      - run:
+          name: show dist contents
+          command: ls -al ~/workspace/dist
+      - persist_to_workspace:
+          root: .
+          paths: dist
+
+  deploy:
+    working_directory: ~/workspace
+    docker:
+      - image: node:8.10.0
+    steps:
+      - attach_workspace:
+        at: ~/workspace
+      - run: touch .nojekyll
+      - run:
+          name: Install and configure dependencies
+          command: |
+            npm install -g yarn
+            npm install -g --silent gh-pages@2.0.1
+
+            git config user.name "ci-build"
+      - add_ssh_keys:
+          fingerprints:
+            - "e4:b9:13:c0:0b:e5:6f:01:28:aa:25:f0:56:41:e7:c0"
+      - run:
+          name: Deploy to gh-pages branch
+          command: gh-pages --dotfiles --message "[skip ci] Updates" --dist public
+
+workflows:
+  version: 2
+
+  deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: master
+      - deploy:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build

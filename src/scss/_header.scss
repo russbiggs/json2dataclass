@@ -1,0 +1,29 @@
+header {
+    height: 42px;
+    background-color: $lapis-lazuli;
+    line-height:42px;
+}
+
+.title {
+    a {
+        color: white;
+        text-decoration: none;
+    }
+
+} 
+
+header > ul {
+    list-style:none;
+    margin: 0;
+    padding: 0 15px;
+}
+
+header > ul > li {
+    display: inline;
+}
+
+.about {
+    cursor: pointer;
+    color: white;
+    float:right;
+}

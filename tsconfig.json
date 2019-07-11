@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "lib": ["es2017", "dom"],
+        "target": "es5",
+        "downlevelIteration": true,
+        "declaration": false
+    }
+}
