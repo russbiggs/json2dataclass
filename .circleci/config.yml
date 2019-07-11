@@ -24,7 +24,7 @@ jobs:
             - image: node:8.10.0
         steps:
             - attach_workspace:
-              at: ~/workspace
+                  at: ~/workspace
             - run: touch .nojekyll
             - run:
                   name: Install and configure dependencies
