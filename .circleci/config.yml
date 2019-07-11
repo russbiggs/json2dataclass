@@ -39,7 +39,7 @@ jobs:
                       - 'e4:b9:13:c0:0b:e5:6f:01:28:aa:25:f0:56:41:e7:c0'
             - run:
                   name: Deploy to gh-pages branch
-                  command: gh-pages --dotfiles --message "[skip ci] Updates" --dist public
+                  command: gh-pages --dotfiles --message "[skip ci] Updates" --dist dist
 
 workflows:
     version: 2
