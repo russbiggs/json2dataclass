@@ -34,6 +34,7 @@ jobs:
                       npm install -g --silent gh-pages@2.0.1
 
                       git config user.name "ci-build"
+                      git config user.email "ci-build@russbiggs.com"
             - add_ssh_keys:
                   fingerprints:
                       - 'e4:b9:13:c0:0b:e5:6f:01:28:aa:25:f0:56:41:e7:c0'
