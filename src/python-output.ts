@@ -108,7 +108,8 @@ class PythonOutput {
                     } else if (typeof item === 'number' && isFinite(item)) {
                         obj[parent][key] = `List[int]`;
                     } else {
-                        obj[parent][key] = `List[${key}]`;
+                        const className = key.charAt(0).toUpperCase() + key.slice(1);
+                        obj[parent][key] = `List[${className}]`;
                         for (const item of data[key]) {
                             this.findObjs(item, agg, key);
                         }
