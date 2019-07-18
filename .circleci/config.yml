@@ -12,6 +12,9 @@ jobs:
             - run: mkdir dist
             - run: yarn install && yarn run build
             - run:
+                  name: move static
+                  command: mv dist/static/* dist/
+            - run:
                   name: show dist contents
                   command: ls -al ~/workspace/dist
             - persist_to_workspace:
