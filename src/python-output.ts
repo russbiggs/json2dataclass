@@ -121,14 +121,16 @@ class PythonOutput {
                         }
                     }
                 }
-                if (listTypes.size > 1) {
+                if (listTypes.size < 1) {
+                    obj[parent][key] = `List`;
+                } else if (listTypes.size > 1) {
                     if (this.imports.indexOf('union') == -1) {
                         this.imports.push('union');
                     }
                     let typeArr = Array.from(listTypes.values());
-                    obj[parent][key] = `List[Union[${typeArr.join(', ')}]]`
+                    obj[parent][key] = `List[Union[${typeArr.join(', ')}]]`;
                 } else {
-                    obj[parent][key] = `List[${listTypes.values().next().value}]`
+                    obj[parent][key] = `List[${listTypes.values().next().value}]`;
                 }
             } else if (data[key] !== null && typeof data[key] == 'object') {
                 obj[parent][key] = properCase(key);
