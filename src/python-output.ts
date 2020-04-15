@@ -1,6 +1,7 @@
 const importStrings = {
     dataclass: `<span class="keyword">from</span> <span class="class-name">dataclasses</span> <span class="keyword">import</span> <span class="class-name">dataclass</span>`,
     list: `<span class="keyword">from</span> <span class="class-name">typing</span> <span class="keyword">import</span> <span class="class-name">List</span>`,
+    union: `<span class="keyword">from</span> <span class="class-name">typing</span> <span class="keyword">import</span> <span class="class-name">Union</span>`,
     datetime: `<span class="keyword">import</span> <span class="class-name">datetime</span>`,
 };
 
@@ -102,18 +103,28 @@ class PythonOutput {
                 if (this.imports.indexOf('list') == -1) {
                     this.imports.push('list');
                 }
+                let listTypes = new Set()
                 for (const item of data[key]) {
                     if (typeof item === 'string' || item instanceof String) {
-                        obj[parent][key] = `List[str]`;
+                        listTypes.add(`str`);
                     } else if (typeof item === 'number' && isFinite(item)) {
-                        obj[parent][key] = `List[int]`;
+                        listTypes.add(`int`);
                     } else {
                         const className = key.charAt(0).toUpperCase() + key.slice(1);
-                        obj[parent][key] = `List[${className}]`;
+                        listTypes.add(`${className}`);
                         for (const item of data[key]) {
                             this.findObjs(item, agg, key);
                         }
                     }
+                }
+                if (listTypes.size > 1) {
+                    if (this.imports.indexOf('union') == -1) {
+                        this.imports.push('union');
+                    }
+                    let typeArr = Array.from(listTypes.values());
+                    obj[parent][key] = `List[Union[${typeArr.join(', ')}]]`
+                } else {
+                    obj[parent][key] = `List[${listTypes.values().next().value}]`
                 }
             } else if (data[key] !== null && typeof data[key] == 'object') {
                 obj[parent][key] = properCase(key);
