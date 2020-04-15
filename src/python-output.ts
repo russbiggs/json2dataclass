@@ -108,7 +108,11 @@ class PythonOutput {
                     if (typeof item === 'string' || item instanceof String) {
                         listTypes.add(`str`);
                     } else if (typeof item === 'number' && isFinite(item)) {
-                        listTypes.add(`int`);
+                        if (Math.floor(item) === item) {
+                            listTypes.add(`int`);
+                        } else {
+                            listTypes.add(`float`);
+                        }
                     } else {
                         const className = key.charAt(0).toUpperCase() + key.slice(1);
                         listTypes.add(`${className}`);
