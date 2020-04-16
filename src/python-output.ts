@@ -103,16 +103,15 @@ class PythonOutput {
                 if (this.imports.indexOf('list') == -1) {
                     this.imports.push('list');
                 }
-                let listTypes = new Set()
+                let listTypes = new Set();
                 for (const item of data[key]) {
-                    if (typeof item === 'string' || item instanceof String) {
-                        listTypes.add(`str`);
-                    } else if (typeof item === 'number' && isFinite(item)) {
-                        if (Math.floor(item) === item) {
-                            listTypes.add(`int`);
-                        } else {
-                            listTypes.add(`float`);
-                        }
+                    if (
+                        typeof item === 'boolean' ||
+                        typeof item === 'number' ||
+                        typeof item === 'string' ||
+                        item instanceof String
+                    ) {
+                        listTypes.add(findType(item, this.datetime));
                     } else {
                         const className = key.charAt(0).toUpperCase() + key.slice(1);
                         listTypes.add(`${className}`);
@@ -175,7 +174,7 @@ const properCase = (word: string): string => {
     return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
 };
 
-const findType = (data: number | String, datetime: boolean): string => {
+const findType = (data: boolean | number | String, datetime: boolean): string => {
     if (typeof data === 'string' || data instanceof String) {
         const regex = RegExp(/^\d{4}(-\d\d(-\d\d(T\d\d:\d\d(:\d\d)?(\.\d+)?(([+-]\d\d:\d\d)|Z)?)?)?)?$/i);
         const match = data.match(regex);
