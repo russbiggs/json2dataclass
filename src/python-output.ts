@@ -66,7 +66,7 @@ class PythonOutput {
     update = () => {
         if (this.data != '') {
             this.elem.innerHTML = '';
-            const objs = new Map();
+            const objs = {};
             const data = JSON.parse(this.data);
 
             this.findObjs(data, objs);
@@ -96,10 +96,10 @@ class PythonOutput {
         }
     };
 
-    findObjs = (data: object, agg: Map<string, object>, parent: string = 'GeneratedClass'): void => {
+    findObjs = (data: object, agg: object, parent: string = 'GeneratedClass'): void => {
         let obj = {};
-        if (agg.has(parent)) {
-            obj = agg.get(parent)
+        if (agg.hasOwnProperty(parent)) {
+            obj = agg[parent]
         }
         for (const key in data) {
             if (data[key] !== null && data[key] instanceof Array) {
@@ -142,10 +142,10 @@ class PythonOutput {
             }
         }
 
-        agg.set(parent, obj);
+        agg[parent] = obj
     };
 
-    createClass = (name: string, data: object): string => {
+    createClass = (name: string, data: any): string => {
         let types = '';
         for (const [key, value] of Object.entries(data)) {
             let keyName = key;
