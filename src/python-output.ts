@@ -66,8 +66,9 @@ class PythonOutput {
     update = () => {
         if (this.data != '') {
             this.elem.innerHTML = '';
-            const objs = [];
+            const objs = {};
             const data = JSON.parse(this.data);
+
             this.findObjs(data, objs);
             let output = '';
 
@@ -85,8 +86,8 @@ class PythonOutput {
                 output += importStrings.dataclass;
                 output += '<br><br>';
             }
-            for (const obj of objs) {
-                output += this.createClass(obj);
+            for (const [name, obj] of Object.entries(objs)) {
+                output += this.createClass(name, obj);
                 output += '<br><br>';
             }
             this.elem.innerHTML = output;
@@ -95,9 +96,11 @@ class PythonOutput {
         }
     };
 
-    findObjs = (data: object, agg: object[], parent: string = 'GeneratedClass'): void => {
+    findObjs = (data: object, agg: object, parent: string = 'GeneratedClass'): void => {
         let obj = {};
-        obj[parent] = {};
+        if (agg.hasOwnProperty(parent)) {
+            obj = agg[parent]
+        }
         for (const key in data) {
             if (data[key] !== null && data[key] instanceof Array) {
                 if (this.imports.indexOf('list') == -1) {
@@ -121,32 +124,30 @@ class PythonOutput {
                     }
                 }
                 if (listTypes.size < 1) {
-                    obj[parent][key] = `List`;
+                    obj[key] = `List`;
                 } else if (listTypes.size > 1) {
                     if (this.imports.indexOf('union') == -1) {
                         this.imports.push('union');
                     }
                     let typeArr = Array.from(listTypes.values());
-                    obj[parent][key] = `List[Union[${typeArr.join(', ')}]]`;
+                    obj[key] = `List[Union[${typeArr.join(', ')}]]`;
                 } else {
-                    obj[parent][key] = `List[${listTypes.values().next().value}]`;
+                    obj[key] = `List[${listTypes.values().next().value}]`;
                 }
             } else if (data[key] !== null && typeof data[key] == 'object') {
-                obj[parent][key] = properCase(key);
+                obj[key] = properCase(key);
                 this.findObjs(data[key], agg, key);
             } else {
-                obj[parent][key] = findType(data[key], this.datetime);
+                obj[key] = findType(data[key], this.datetime);
             }
         }
 
-        agg.push(obj);
+        agg[parent] = obj
     };
 
-    createClass = (data: object): string => {
-        const name = Object.keys(data)[0];
-        const obj = data[name];
+    createClass = (name: string, data: any): string => {
         let types = '';
-        for (const [key, value] of Object.entries(obj)) {
+        for (const [key, value] of Object.entries(data)) {
             let keyName = key;
             if (this.snakeCase) {
                 keyName = key
