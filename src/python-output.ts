@@ -113,7 +113,7 @@ class PythonOutput {
                     ) {
                         listTypes.add(findType(item, this.datetime));
                     } else {
-                        const className = key.charAt(0).toUpperCase() + key.slice(1);
+                        const className = properCase(key);
                         listTypes.add(`${className}`);
                         for (const item of data[key]) {
                             this.findObjs(item, agg, key);
@@ -171,7 +171,10 @@ class PythonOutput {
 }
 
 const properCase = (word: string): string => {
-    return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+    return (
+        word.charAt(0).toUpperCase() +
+        word.substr(1).replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
+    );
 };
 
 const findType = (data: boolean | number | String, datetime: boolean): string => {
